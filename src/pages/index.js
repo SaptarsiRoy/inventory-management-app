@@ -34,7 +34,21 @@ import styles from "@/styles/Home.module.css";
 const fetcher = (...args) => fetch(...args).then((res) => res.json());
 
 // function to handle product add, edit and delete
-const handleProduct = async (product) => {
+const handleProduct = async (url, { arg }) => {
+
+  // get product data from arg
+  const { product } = arg;
+
+  // fetch data from api
+  const res = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(product),
+  });
+  const data = await res.json();
+  return data;
 };
 
 export default function Home() {
@@ -54,7 +68,10 @@ export default function Home() {
   const { data, err } = useSWR("/api/products", fetcher);
 
   // use swr mutation hook to mutate data
-  const { trigger } = useSWRMutation("/api/products", fetcher);
+  const { trigger } = useSWRMutation("/api/products", handleProduct);
+
+  // function to handle add product form submit
+  const submitHandler = (product) => trigger({ product });
 
   // if data is loading
   if (!data)
@@ -75,7 +92,7 @@ export default function Home() {
         <AddProductModal
           show={showAddProductModal}
           onHide={handleClose}
-          submitHandler={handleClose}
+          submitHandler={submitHandler}
         />
         <Navbar bg="dark" expand="lg" variant="dark" className={styles.navbar}>
           <Container>
@@ -190,9 +207,9 @@ const AddProductModal = ({ show, onHide, submitHandler }) => {
         stock: productStock,
         expiryDate: productExpiryDate,
       }
-      console.log(productName, productPrice, productStock, productExpiryDate);
-      submitHandler();
+      submitHandler(new_product);
       clearFormData();
+      onHide();
     } else {
       setValidated(true);
     }
