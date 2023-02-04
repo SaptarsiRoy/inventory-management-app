@@ -9,6 +9,8 @@ require('dotenv').config({ path: '.env.local' });
 // create connection function
 async function connection() {
     try {
+        // set strictQuery to true 
+        mongoose.set('strictQuery', true);
         // setup mongoose connection
         mongoose.connect(process.env.MONGODB_URL, {
             useNewUrlParser: true,
