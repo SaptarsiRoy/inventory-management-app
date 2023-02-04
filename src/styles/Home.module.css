@@ -7,3 +7,17 @@
 .form {
     width: 30%;
 }
+
+/* Add Product Button css */
+.add-product-btn {
+    display: block;
+    float: right;
+    margin: 10px 10px;
+    border-radius: 10%;
+    background-color: #004AAD ;
+    color: white ;
+}
+
+.add-product-btn:hover {
+    background-color: #00306F ;
+}
