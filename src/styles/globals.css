@@ -1,3 +1,24 @@
+/* import bootstrap css */
+@import "~bootstrap/dist/css/bootstrap.min.css";
+
 body {
+  margin: 0;
+}
+
+th {
+  text-align: center;
+  font-weight: 600;
+  font-size: large;
+}
+
+tr {
+  text-align: center;
+  font-weight: 500;
+}
+
+/* Chrome, Safari, Edge, Opera Hide Arrows From Input Number*/
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
   margin: 0;
 }
