@@ -21,6 +21,7 @@ import {
   Table,
   Button,
   Modal,
+  InputGroup
 } from "react-bootstrap";
 
 // import Image component
@@ -165,11 +166,36 @@ const AddProductModal = ({ show, onHide, submitHandler }) => {
   const [productStock, setProductStock] = useState("");
   const [productExpiryDate, setProductExpiryDate] = useState("");
 
+  // form validation state
+  const [validated, setValidated] = useState(false);
+
+  // function to clear form data
+  const clearFormData = () => {
+    setProductName("");
+    setProductPrice("");
+    setProductStock("");
+    setProductExpiryDate(new Date().toISOString().slice(0, 10));
+  };
+
   // submit handler
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(productName, productPrice, productStock, productExpiryDate);
-    submitHandler();
+    // check if form is valid
+    if (productExpiryDate >= new Date().toISOString() && productStock > 0 && productPrice > 0 && productName !== "") {
+      e.stopPropagation();
+      setValidated(false);
+      const new_product = {
+        name: productName,
+        price: productPrice,
+        stock: productStock,
+        expiryDate: productExpiryDate,
+      }
+      console.log(productName, productPrice, productStock, productExpiryDate);
+      submitHandler();
+      clearFormData();
+    } else {
+      setValidated(true);
+    }
   };
 
   return (
@@ -178,42 +204,61 @@ const AddProductModal = ({ show, onHide, submitHandler }) => {
         <Modal.Title>Add a New Product</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Form onSubmit={handleSubmit} id="modalForm" >
+        <Form noValidate validated={validated} onSubmit={handleSubmit} id="modalForm"  >
           <Form.Group className="mb-3" controlId="formProductName">
             <Form.Label>Product Name</Form.Label>
             <Form.Control
+              required
               type="text"
               placeholder="Enter product name"
               onChange={(e) => setProductName(e.target.value)}
               value={productName}
             />
+            <Form.Control.Feedback type="invalid">
+              Please enter a product name.
+            </Form.Control.Feedback>
           </Form.Group>
           <Form.Group className="mb-3" controlId="formProductPrice">
             <Form.Label>Product Price</Form.Label>
             <Form.Control
+              required
               type="number"
               placeholder="Enter product price"
               onChange={(e) => setProductPrice(e.target.valueAsNumber)}
               value={productPrice}
             />
+            <Form.Control.Feedback type="invalid">
+              Please enter a product price.
+            </Form.Control.Feedback>
           </Form.Group>
           <Form.Group className="mb-3" controlId="formProductStock">
             <Form.Label>Product Stock</Form.Label>
-            <Form.Control
-              type="number"
-              placeholder="Enter product stock"
-              onChange={(e) => setProductStock(e.target.valueAsNumber)}
-              value={productStock}
-            />
+            <InputGroup hasValidation>
+              <Form.Control
+                required
+                type="number"
+                placeholder="Enter product stock"
+                onChange={(e) => setProductStock(e.target.valueAsNumber)}
+                value={productStock}
+              />
+              <Form.Control.Feedback type="invalid">
+                Please enter a product stock.
+              </Form.Control.Feedback>
+            </InputGroup>
           </Form.Group>
           <Form.Group className="mb-3" controlId="formProductExpiryDate">
             <Form.Label>Product Expiry Date</Form.Label>
             <Form.Control
               type="date"
               placeholder="Enter product expiry date"
+              defaultValue={productExpiryDate}
               onChange={(e) => setProductExpiryDate(new Date(e.target.valueAsDate).toISOString())}
               value={productExpiryDate.slice(0, 10)}
+              min={new Date().toISOString().slice(0, 10)}
             />
+            <Form.Control.Feedback type="invalid">
+              Please enter a product expiry date in the future.
+            </Form.Control.Feedback>
           </Form.Group>
         </Form>
       </Modal.Body>
