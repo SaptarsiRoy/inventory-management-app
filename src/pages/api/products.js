@@ -140,7 +140,6 @@ const checkBody = (body) => {
 const checkDuplicateProduct = async (product) => {
     // check if product already exists
     const dup_product = await Product.findOne({ name: product.name, price: product.price, stock: product.stock });
-    console.log(dup_product);
     // return true if product does not exists
     return dup_product ? false : true;
 };
