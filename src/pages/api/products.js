@@ -26,8 +26,10 @@ export default async function handler(req, res) {
             const { page } = req.query;
             // get all products
             const products = await getProducts(page);
+            // get total number of products
+            const count = await countProducts();
             // send products as response
-            res.status(200).json(products);
+            res.status(200).json({ products, count });
             break;
         }
         case "POST":
@@ -111,6 +113,14 @@ const getProducts = async (page) => {
         .skip(views_per_page * (page - 1));
     // return products
     return products;
+};
+
+// function to count all products from database
+const countProducts = async () => {
+    // count all products
+    const count = await Product.countDocuments();
+    // return count
+    return count;
 };
 
 // function to create a product
