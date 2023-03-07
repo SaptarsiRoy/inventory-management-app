@@ -11,10 +11,6 @@ const productSchema = new Schema({
         type: Number,
         required: true
     },
-    expiryDate: {
-        type: Date,
-        required: false
-    },
     stock: {
         type: Number,
         required: true
