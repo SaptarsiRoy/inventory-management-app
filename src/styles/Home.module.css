@@ -21,3 +21,15 @@
 .add-product-btn:hover {
     background-color: #00306F ;
 }
+
+/* pagination css */
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin: 10px 0;
+}
+
+.pagination > ul.pagination > li {
+    background-color: gray;
+    color: white;
+}
