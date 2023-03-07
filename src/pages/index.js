@@ -31,6 +31,9 @@ import Image from "next/image";
 // styles
 import styles from "@/styles/Home.module.css";
 
+// import useDebounce hook
+
+
 // views per page
 const viewsPerPage = 10;
 
@@ -39,6 +42,9 @@ const getSerialNumber = (page, index) => (page - 1) * viewsPerPage + index + 1;
 
 // fetcher function
 const fetcher = (...args) => fetch(...args).then((res) => res.json());
+
+// fecther function for search
+const searchFetcher = (...args) => fetch(...args).then((res) => res.json());
 
 // function to handle product add, edit and delete
 const handleProduct = async (url, { arg }) => {
@@ -88,9 +94,28 @@ const handleProduct = async (url, { arg }) => {
   }
 };
 
+// function to handle search product
+const handleSearchProduct = async (url, { arg }) => {
+  // get product data from arg
+  const { product } = arg;
+  
+  const res = await searchFetcher(`${url}?name=${product}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  const data = await res.json();
+  return data;
+};
+
 export default function Home() {
   // set state for page
   const [page, setPage] = useState(1);
+
+  // set state for search query
+  const [searchQuery, setSearchQuery] = useState("");
 
   // error state
   const [error, setError] = useState(null);
@@ -124,6 +149,12 @@ export default function Home() {
 
   // use swr mutation hook to mutate data
   const { trigger } = useSWRMutation("/api/products", handleProduct);
+
+  // use swr mutation hook to mutate serach data
+  const { trigger : searchTrigger } = useSWRMutation("/api/products/search", handleSearchProduct);
+
+  // function to handle search
+  const handleSearch = (e) => searchTrigger();
 
   // function to handle add product form submit
   const addNewProduct = (product) => trigger({ product, method: "POST" });
@@ -202,6 +233,8 @@ export default function Home() {
                   placeholder="Search"
                   aria-label="Search"
                   width={100}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  value={searchQuery}
                 />
               </Form>
             </Navbar.Collapse>
